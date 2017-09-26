@@ -1,6 +1,6 @@
 #include "game.hpp"
 
 int main(int argc, char ** argv){
-    HaloKeeper hk;
+    Game hk;
     hk.start(argc, argv);
 }

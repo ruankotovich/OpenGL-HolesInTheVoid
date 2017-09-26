@@ -4,14 +4,24 @@
 #define PI 3.14159265
 #define MS 15
 #define BOUNDARY 1.1
-
+const float twicePi = PI * 2;
+const float DEG2RAD = PI / 180;
 static float aRatio = 1;
 static float mDensity = 2.05f;
-
 static float lxBoundary = -1;
 static float rxBoundary = 1;
 static float uyBoundary = 1;
 static float byBoundary = -1;
+
+float randomFloat(float min, float max)
+{
+    float random = ((float)rand()) / (float)RAND_MAX;
+
+    // generate (in your case) a float between 0 and (4.5-.78)
+    // then add .78, giving you a float between .78 and 4.5
+    float range = max - min;
+    return (random * range) + min;
+}
 
 float degrees2rad(float _degrees)
 {
@@ -50,10 +60,40 @@ void _glAspectVertex2f(GLfloat _w, GLfloat _k)
     glVertex2f(_w / aRatio, _k / aRatio);
 }
 
+void _glCompleteCircle(GLfloat x, GLfloat y, GLfloat radius)
+{
+    glBegin(GL_TRIANGLE_FAN); //BEGIN CIRCLE
+    glVertex2f(x, y); // center of circle
+    for (int i = 0; i <= 20; i++) {
+        glVertex2f(
+            (x + (radius * cos(i * twicePi / 20))), (y + (radius * sin(i * twicePi / 20))));
+    }
+    glEnd(); //END
+}
+
+void _glCircle(float radius)
+{
+    glBegin(GL_LINE_LOOP);
+
+    for (int i = 0; i < 360; i++) {
+        float degInRad = i * DEG2RAD;
+        glVertex2f(cos(degInRad) * radius, sin(degInRad) * radius);
+    }
+
+    glEnd();
+}
+
+void _setBgColor(GLfloat f1, GLfloat f2, GLfloat f3)
+{
+    // Set "clearing" or background color
+    glClearColor(f1, f2, f3, 1.0f);
+    // glutFullScreen();
+}
+
 void _initGL()
 {
     // Set "clearing" or background color
-    glClearColor(0.01f, 0.0f, .05f, 1.0f);
+    glClearColor(0.01f, 0.035f, .055f, 1.0f);
     glMatrixMode(GL_PROJECTION); // Select the Projection matrix for operation
     glLoadIdentity(); // Reset Projection matrix
     // glutFullScreen();

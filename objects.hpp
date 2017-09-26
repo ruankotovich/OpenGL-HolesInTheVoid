@@ -1,6 +1,7 @@
 #pragma once
 #include "glutils.hpp"
 #include <cstdio>
+#include <cstdlib>
 
 #define STEP (0.001f / aRatio);
 
@@ -26,13 +27,14 @@ public:
 
 class Drawnable : public OrdinaryObject {
 public:
+    bool showing = true;
+    float locationX = 0.0f;
+    float locationY = 0.0f;
     virtual void draw() = 0;
 };
 
 class Moveable : public Drawnable {
 public:
-    float locationX = 0.0f;
-    float locationY = 0.0f;
     float angle = 0.0f;
     float maxSpeed = 1.f;
     float maxRotationSpeed = 1.f;
@@ -52,11 +54,51 @@ public:
     virtual void rotateAsParamether(float f) = 0;
 };
 
+class Star : public Drawnable {
+public:
+    GLfloat color1 = 1;
+    GLfloat color2 = 1;
+    GLfloat color3 = 1;
+    GLfloat size;
+    Star()
+    {
+        showing = false;
+        organize();
+    }
+
+    void organize()
+    {
+        this->locationX = randomFloat(lxBoundary, rxBoundary);
+        this->locationY = randomFloat(byBoundary, uyBoundary);
+        this->size = randomFloat(0.001, 0.004);
+    }
+
+    void performActions() override
+    {
+        // color1 = (rand() % 100) / 100.0f;
+        // color2 = (rand() % 100) / 100.0f;
+        // color3 = (rand() % 100) / 100.0f;
+    }
+    void draw() override
+    {
+        if (showing) {
+            glColor3f(color1, color2, color3);
+            _glCompleteCircle(locationX, locationY, size);
+        }
+    }
+};
+
 class Spaceship : public Moveable {
 public:
+    GLfloat i = speed;
+    int kleff = 0;
     MovementState movementState = STOPPED;
+
     bool turbo = false;
-    GLfloat turboGain = 2.5;
+    GLfloat turboGain = 5;
+
+    float sinA = 0;
+    float cosA = 0;
 
     void toggleTurbo()
     {
@@ -73,7 +115,7 @@ public:
         rotationAcceleration = 0.10f;
         acceleration = 0.20f;
 
-        maxSpeed = 10.f;
+        maxSpeed = 20.f;
         maxRotationSpeed = 1.f;
     }
 
@@ -89,8 +131,8 @@ public:
 
     virtual void move(Movement movement) override
     {
-        float sinA = sin(degrees2rad(this->angle)) * STEP;
-        float cosA = cos(degrees2rad(this->angle)) * STEP;
+        sinA = sin(degrees2rad(this->angle)) * STEP;
+        cosA = cos(degrees2rad(this->angle)) * STEP;
 
         switch (movement) {
         case LEFT:
@@ -141,8 +183,6 @@ public:
 
     virtual void draw() override
     {
-        static GLfloat i = speed;
-        static int kleff = 0;
 
         glBegin(GL_POLYGON);
         glColor3f(0.2f, 0.0f, 0.0f);
@@ -260,6 +300,21 @@ public:
             _glAspectVertex2f(0.000f, -0.010f - i);
             _glAspectVertex2f(0.012f, -0.010f);
             glEnd();
+
+            for (int i = 0; i < 5; i++) {
+                glBegin(GL_QUADS);
+                float offset = -50 + (rand() % 100);
+                offset /= 20;
+                glColor4f(1.f, 1.f, 1.f, .005f);
+
+                _glAspectVertex2f(cosA + offset, 100);
+                _glAspectVertex2f(cosA + offset + aRatio * 0.01, 100);
+                _glAspectVertex2f(cosA + offset + aRatio * 0.01, -100);
+                _glAspectVertex2f(cosA + offset, -100);
+
+                glEnd();
+            }
+            //TODO ; LINESTRIP
         }
     }
 };
