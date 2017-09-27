@@ -9,6 +9,7 @@ static void ftl(int x);
 
 struct GameLoop {
     Spaceship spaceship;
+  
     std::vector<Moveable*> moveableObjects;
     std::vector<Drawnable*> drawnableObjects;
 
@@ -80,7 +81,7 @@ struct GameLoop {
         // }
 
         // glDrawPixels(W, H, GL_RGB, GL_UNSIGNED_INT, data);
-        
+
         // glPopMatrix();
     }
 
@@ -142,6 +143,9 @@ struct GameLoop {
                     nointerrupt = false;
                     glutTimerFunc(0, ftl, 0);
                 }
+                break;
+            case 'b':
+                spaceship.burn();
                 break;
             }
         }

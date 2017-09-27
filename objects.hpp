@@ -20,6 +20,12 @@ enum MovementState {
     STOPPED
 };
 
+enum ShipState {
+    FINE,
+    BREAKING,
+    DESTROYED
+};
+
 class OrdinaryObject {
 public:
     virtual void performActions() = 0;
@@ -93,6 +99,7 @@ public:
     GLfloat i = speed;
     int kleff = 0;
     MovementState movementState = STOPPED;
+    ShipState shipState = FINE;
 
     bool turbo = false;
     GLfloat turboGain = 5;
@@ -124,6 +131,11 @@ public:
         this->movementState = state;
     }
 
+    void burn()
+    {
+        this->shipState = ShipState::BREAKING;
+    }
+
     virtual void rotateAsParamether(float angle) override
     {
         this->angle += fmod(angle, 360) * (speed / 3);
@@ -133,6 +145,11 @@ public:
     {
         sinA = sin(degrees2rad(this->angle)) * STEP;
         cosA = cos(degrees2rad(this->angle)) * STEP;
+
+        if (shipState != FINE) {
+            movementState = MovementState::STOPPING;
+            return;
+        }
 
         switch (movement) {
         case LEFT:
@@ -183,7 +200,6 @@ public:
 
     virtual void draw() override
     {
-
         glBegin(GL_POLYGON);
         glColor3f(0.2f, 0.0f, 0.0f);
         _glAspectVertex2f(-0.020f, 0.050f);
