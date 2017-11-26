@@ -60,6 +60,17 @@ public:
     virtual void rotateAsParamether(float f) = 0;
 };
 
+class UnknownMan : Drawnable{
+    public:
+    virtual void draw(){
+
+    }
+
+    virtual void performActions(){
+        
+    }
+};
+
 class Star : public Drawnable {
 public:
     GLfloat color1 = 1;
@@ -81,9 +92,9 @@ public:
 
     void performActions() override
     {
-        // color1 = (rand() % 100) / 100.0f;
-        // color2 = (rand() % 100) / 100.0f;
-        // color3 = (rand() % 100) / 100.0f;
+        color1 = (rand() % 100) / 100.0f;
+        color2 = (rand() % 100) / 100.0f;
+        color3 = (rand() % 100) / 100.0f;
     }
     void draw() override
     {

@@ -1,6 +1,7 @@
 #pragma once
 #include <GL/glut.h>
 #include <cmath>
+#include <cstring>
 #define PI 3.14159265
 #define MS 15
 #define BOUNDARY 1.1
@@ -21,6 +22,22 @@ float randomFloat(float min, float max)
     // then add .78, giving you a float between .78 and 4.5
     float range = max - min;
     return (random * range) + min;
+}
+
+void displayText( float x, float y, int r, int g, int b, const char *string ) {
+	int j = strlen( string );
+    glPushMatrix();
+    glLoadIdentity();
+    glColor3f( r, g, b );
+    glTranslatef(x,y,0.0f);
+	glRasterPos2f( 0, 0 );
+	
+        for( int i = 0; i < j; i++ ) {
+            glutBitmapCharacter( GLUT_BITMAP_TIMES_ROMAN_24, string[i] );
+        }
+
+    glPopMatrix();
+    glLoadIdentity();
 }
 
 float degrees2rad(float _degrees)
