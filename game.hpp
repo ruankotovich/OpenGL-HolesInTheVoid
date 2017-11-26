@@ -28,6 +28,7 @@ std::vector<std::string> texts = {
 struct GameLoop {
     Spaceship spaceship;
     UnknownMan man;
+    // Planet planet;
     size_t H = 100;
     size_t W = 100;
 
@@ -72,7 +73,8 @@ struct GameLoop {
         //     std::cout << std::endl;
         // }
 
-            
+        drawnableObjects.push_back(&man);
+        // drawnableObjects.push_back(&planet);
         moveableObjects.push_back(&spaceship);
         addStars();
     }
@@ -136,6 +138,22 @@ struct GameLoop {
 
         displayText(lxBoundary+.50,byBoundary+.20,255,255,255,texts[textPosition].c_str());   
 
+        glPushMatrix();
+        glLoadIdentity();
+        glRasterPos2f(lxBoundary+0.10, byBoundary+0.10);
+        unsigned int data[H][W][3];
+        for (size_t y = 0; y < H; ++y) {
+                for (size_t x = 0; x < W; ++x) {
+                    data[y][x][0] = hexToColor(rand() % 256);
+                    data[y][x][1] = hexToColor(rand() % 256);
+                    data[y][x][2] = hexToColor(rand() % 256);
+                }   
+            }
+        
+        glDrawPixels(W, H, GL_RGB, GL_UNSIGNED_INT, data);
+
+        glPopMatrix();
+
         for (auto& drawnable : drawnableObjects) {
             glPushMatrix();
             drawnable->performActions();
@@ -151,23 +169,6 @@ struct GameLoop {
             moveable->draw();
             glPopMatrix();
         }
-
-        glPushMatrix();
-        glLoadIdentity();
-        // std::cout << lxBoundary << std::endl;
-        glRasterPos2f(lxBoundary+0.10, byBoundary+0.10);
-        unsigned int data[H][W][3];
-        for (size_t y = 0; y < H; ++y) {
-                for (size_t x = 0; x < W; ++x) {
-                    data[y][x][0] = hexToColor(rand() % 256);
-                    data[y][x][1] = hexToColor(rand() % 256);
-                    data[y][x][2] = hexToColor(rand() % 256);
-                }   
-            }
-        
-        glDrawPixels(W, H, GL_RGB, GL_UNSIGNED_INT, data);
-
-        glPopMatrix();
 
 
     }

@@ -60,16 +60,51 @@ public:
     virtual void rotateAsParamether(float f) = 0;
 };
 
-class UnknownMan : Drawnable{
+class UnknownMan : public Drawnable{
     public:
-    virtual void draw(){
+        UnknownMan(){
+            locationX = lxBoundary-.65;
+            locationY = byBoundary+.10;
+        }
 
+    virtual void draw() override
+    
+    {
+        if (showing) {
+            glColor3f(1.f, 1.f, 1.f);
+            _glCompleteCircle(locationX, locationY, 0.05);
+            _glCompleteCircle(locationX, locationY-.11, 0.08);
+        }
     }
 
-    virtual void performActions(){
-        
+
+    virtual void performActions() override{
+
     }
 };
+
+class Planet : public Drawnable{
+    public:
+
+    // Planet(){
+    //     locationX = -rand()+rand();
+    //     locationY = -rand()+rand();
+    // }
+    virtual void draw() override
+    
+    {
+        if (showing) {
+            glColor3f(rand(),rand(), rand());
+            _glCompleteCircle(locationX, locationY, 0.2);
+        }
+    }
+
+
+    virtual void performActions() override{
+
+    }
+};
+
 
 class Star : public Drawnable {
 public:
