@@ -24,7 +24,12 @@ float randomFloat(float min, float max)
     return (random * range) + min;
 }
 
-void displayText( float x, float y, int r, int g, int b, const char *string ) {
+void displayText( float x, float y, int r, int g, int b, const char *string, bool clear = true) {
+    
+    if(clear){
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+    }
+
 	int j = strlen( string );
     glPushMatrix();
     glLoadIdentity();

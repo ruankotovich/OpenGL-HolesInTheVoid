@@ -1,5 +1,6 @@
 #pragma once
 #include "glutils.hpp"
+#include <iostream>
 #include <cstdio>
 #include <cstdlib>
 
@@ -86,19 +87,17 @@ class UnknownMan : public Drawnable{
 class Planet : public Drawnable{
     public:
 
-    // Planet(){
-    //     locationX = -rand()+rand();
-    //     locationY = -rand()+rand();
-    // }
-    virtual void draw() override
-    
-    {
-        if (showing) {
-            glColor3f(rand(),rand(), rand());
-            _glCompleteCircle(locationX, locationY, 0.2);
-        }
+    Planet(){
+        
     }
 
+    virtual void draw() override
+    {
+        if (showing) {
+            glColor3f(0.2,0,0);
+            _glCompleteCircle(locationX, locationY, 0.7);
+        }
+    }
 
     virtual void performActions() override{
 
@@ -378,5 +377,11 @@ public:
             }
             //TODO ; LINESTRIP
         }
+
+        if(this->shipState!= FINE){
+             glColor3f(1.f-((rand() % 500) / 500.f), 1.f-((rand() % 500) / 500.f), 0.f);
+            _glCompleteCircle(locationX+( (rand() % 1000) / 10000.f ) , locationY+( (rand() % 1000) / 10000.f ), 0.005);
+        }
+
     }
 };

@@ -14,12 +14,11 @@ static void ftl(int x);
 
 const void* font=GLUT_BITMAP_9_BY_15;
 
-int textPosition = 1;
-unsigned long text_timestamp = 0;
+bool ftl_happening = false;
 
 std::vector<std::string> texts = {
-    "",
-    "What do you think are you doing?",
+    "F T L    S U C C E S S F U L L Y    P E R F O R M E D.",
+    "C O N N E C T I O N   L O S T",
     "Do you chupa cu?",
     "Dobry' uta kakashka, xexexexexe!",
     "Prost!"
@@ -28,7 +27,7 @@ std::vector<std::string> texts = {
 struct GameLoop {
     Spaceship spaceship;
     UnknownMan man;
-    // Planet planet;
+    Planet planet;
     size_t H = 100;
     size_t W = 100;
 
@@ -39,44 +38,15 @@ struct GameLoop {
     std::vector<bool> keysToggle;
     std::vector<Star> stars;
     bool toClean = false;
-    // std::unordered_map<int, std::unordered_map<int, bool>> banner;
-
-    // std::unordered_map<char,char[5][5]> charmap;
-            
             
     GameLoop()
         : keys(256, false)
         , keysToggle(256, false)
     {
-        // std::ifstream filestream("charmap.cm");
-
-        // std::string line;
-        
-        // while(std::getline(filestream,line)){
-        //     auto &matrix = charmap[line[0]];
-        //     for(int i=0;i<5;i++){
-        //         std::getline(filestream,line);
-        //         for(int j=0;j<5;j++){
-        //             char l = line[j];
-        //             matrix[i][j] = l;
-        //         }
-        //     }
-        // }
-
-        // addCharToBanner(100,100,'a');
-
-        // auto &matrix = charmap['c'];
-        // for(int i=0;i<5;i++){
-        //     for(int j=0;j<5;j++){
-        //         std::cout<<matrix[i][j];
-        //     }
-        //     std::cout << std::endl;
-        // }
-
+          addStars();
         drawnableObjects.push_back(&man);
-        // drawnableObjects.push_back(&planet);
+        drawnableObjects.push_back(&planet);
         moveableObjects.push_back(&spaceship);
-        addStars();
     }
 
     // void addCharToBanner(int x, int y, char c){
@@ -119,55 +89,67 @@ struct GameLoop {
 
     void draw()
     {  
-        text_timestamp++;
 
-        if(text_timestamp>100){
-            text_timestamp = 0;
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+        if(!ftl_happening){
+            displayText(lxBoundary+.50,byBoundary+.20,255,255,255,texts[0].c_str());   
             
-            textPosition++;
-            if(textPosition >= texts.size()){
-                textPosition = 0;   
-            }
-        }
-
-        // if(toClean){
-        //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-        //     toClean = false;
-        // }
-
-        displayText(lxBoundary+.50,byBoundary+.20,255,255,255,texts[textPosition].c_str());   
-
-        glPushMatrix();
-        glLoadIdentity();
-        glRasterPos2f(lxBoundary+0.10, byBoundary+0.10);
-        unsigned int data[H][W][3];
-        for (size_t y = 0; y < H; ++y) {
-                for (size_t x = 0; x < W; ++x) {
-                    data[y][x][0] = hexToColor(rand() % 256);
-                    data[y][x][1] = hexToColor(rand() % 256);
-                    data[y][x][2] = hexToColor(rand() % 256);
-                }   
-            }
-        
-        glDrawPixels(W, H, GL_RGB, GL_UNSIGNED_INT, data);
-
-        glPopMatrix();
-
-        for (auto& drawnable : drawnableObjects) {
             glPushMatrix();
-            drawnable->performActions();
-            drawnable->draw();
+            glLoadIdentity();
+            glRasterPos2f(lxBoundary+0.10, byBoundary+0.10);
+            unsigned int data[H][W][3];
+            
+            for (size_t y = 0; y < H; ++y) {
+                    for (size_t x = 0; x < W; ++x) {
+                        data[y][x][0] = hexToColor(255);
+                        data[y][x][1] = hexToColor(0);
+                        data[y][x][2] = hexToColor(0);
+                    }   
+                }
+            
+            glDrawPixels(W, H, GL_RGB, GL_UNSIGNED_INT, data);
             glPopMatrix();
-        }
 
-        for (auto& moveable : moveableObjects) {
-            moveable->performActions();
+
+            for (auto& drawnable : drawnableObjects) {
+                glPushMatrix();
+                drawnable->performActions();
+                drawnable->draw();
+                glPopMatrix();
+            }
+            
+            for (auto& moveable : moveableObjects) {
+                moveable->performActions();
+                glPushMatrix();
+                glTranslatef(moveable->locationX, moveable->locationY, 0);
+                glRotatef(moveable->angle, 0, 0, 1.0f);
+                moveable->draw();
+                glPopMatrix();
+            }
+        }else{
+            displayText(lxBoundary+.50,byBoundary+.20,255,255,255,texts[1].c_str());   
             glPushMatrix();
-            glTranslatef(moveable->locationX, moveable->locationY, 0);
-            glRotatef(moveable->angle, 0, 0, 1.0f);
-            moveable->draw();
+            glLoadIdentity();
+            glRasterPos2f(lxBoundary+0.10, byBoundary+0.10);
+            unsigned int data[H][W][3];
+            
+            for (size_t y = 0; y < H; ++y) {
+                    for (size_t x = 0; x < W; ++x) {
+                        data[y][x][0] = hexToColor(rand() % 256);
+                        data[y][x][1] = hexToColor(rand() % 256);
+                        data[y][x][2] = hexToColor(rand() % 256);
+                    }   
+                }
+            
+            glDrawPixels(W, H, GL_RGB, GL_UNSIGNED_INT, data);
             glPopMatrix();
+
+
+                spaceship.performActions();
+                glPushMatrix();
+                glTranslatef(spaceship.locationX, spaceship.locationY, 0);
+                glRotatef(spaceship.angle, 0, 0, 1.0f);
+                spaceship.draw();
+                glPopMatrix(); 
         }
 
 
@@ -231,10 +213,12 @@ struct GameLoop {
                 break;
             case 'f':
                 if (spaceship.movementState == MovementState::STOPPED) {
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
                     _setBgColor(0.f, 0.f, 0.f);
                     dismissStars();
                     spaceship.setMovementState(MovementState::FTL);
                     nointerrupt = false;
+                    ftl_happening = true;
                     glutTimerFunc(0, ftl, 0);
                 }
                 break;
@@ -289,6 +273,7 @@ static void firstIdle(int time)
         aRatio += (incrementFI + 0.00005);
         glutTimerFunc(MS, firstIdle, 0);
     } else {
+        ftl_happening = false;
         glClearColor(0.01f, 0.035f, .055f, 1.0f);
         gameLoop.restartStars();
         gameLoop.spaceship.setMovementState(MovementState::STOPPED);
